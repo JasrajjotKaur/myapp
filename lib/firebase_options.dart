@@ -49,20 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCLtiKELkkQUCmYjzzlospW4z9SrcpHO1A',
-    appId: '1:1020915592761:web:37d6deec96613c702de7e8',
-    messagingSenderId: '1020915592761',
-    projectId: 'rdp-todo-7b1e9',
-    authDomain: 'rdp-todo-7b1e9.firebaseapp.com',
-    storageBucket: 'rdp-todo-7b1e9.firebasestorage.app',
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDsVN38PoR6HyFvZhbH_wPOFKFdHHaopZU',
+    appId: '1:716614330003:web:efa937f0d2e2b0be078f66',
+    messagingSenderId: '716614330003',
+    projectId: 'rdp-to-do-list-15fa6',
+    authDomain: 'rdp-to-do-list-15fa6.firebaseapp.com',
+    storageBucket: 'rdp-to-do-list-15fa6.firebasestorage.app',
+    measurementId: 'G-PMSTYQLWKQ',
   );
 
-  static FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCy4_YaPQE-5HDS-wD2uIQxnmbOw_hzG8A',
-    appId: '1:1020915592761:android:32545d533c8bb5a92de7e8',
-    messagingSenderId: '1020915592761',
-    projectId: 'rdp-todo-7b1e9',
-    storageBucket: 'rdp-todo-7b1e9.firebasestorage.app',
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyBx7W6GVUAlwecnM8ZNqQkesiomplbTYos',
+    appId: '1:716614330003:android:6e72bc381771844b078f66',
+    messagingSenderId: '716614330003',
+    projectId: 'rdp-to-do-list-15fa6',
+    storageBucket: 'rdp-to-do-list-15fa6.firebasestorage.app',
   );
 }

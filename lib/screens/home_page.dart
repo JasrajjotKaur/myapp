@@ -1,7 +1,9 @@
+// Importing packages from flutter and firebase
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// Main page of the app that displays the tasks
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -10,16 +12,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Firestore instance to manage the tasks
   final FirebaseFirestore db =
-      FirebaseFirestore.instance; //new firestore instance
+      FirebaseFirestore.instance; // New firestore instance
+
+  // Controller for the text field or task name input
   final TextEditingController nameController =
       TextEditingController(); //captures textform input
+
+  // List of fetched tasks from Firestore to hold
   final List<Map<String, dynamic>> tasks = [];
 
   @override
   void initState() {
     super.initState();
-    fetchTasks();
+    fetchTasks(); // Fetch tasks when the app starts
   }
 
   //Fetches tasks from the firestore and update local task list
@@ -40,10 +47,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  //Function that adds new tasks to local state & firestore database
+  // Function that adds new tasks to local state & firestore database
   Future<void> addTask() async {
     final taskName = nameController.text.trim();
 
+    // Check if the task name is not empty
+    // Add the task to Firestore if it's not empty
     if (taskName.isNotEmpty) {
       final newTask = {
         'name': taskName,
@@ -58,28 +67,33 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         tasks.add({'id': docRef.id, ...newTask});
       });
-      nameController.clear();
+      nameController.clear(); // Used to clear the input field
     }
   }
 
   //Updates the completion status of the task in Firestore & locally
   Future<void> updateTask(int index, bool completed) async {
     final task = tasks[index];
+
+    // Updating the task in Firestore
     await db.collection('tasks').doc(task['id']).update({
       'completed': completed,
     });
 
+    // Updating the task locally
     setState(() {
       tasks[index]['completed'] = completed;
     });
   }
 
-  //Delete the task locally & in the Firestore
+  // It deletes the task locally & in the Firestore
   Future<void> removeTasks(int index) async {
     final task = tasks[index];
 
+    // Deleting the task from Firestore
     await db.collection('tasks').doc(task['id']).delete();
 
+    // Removing the task locally
     setState(() {
       tasks.removeAt(index);
     });
@@ -87,6 +101,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Build the UI of the home page like appbar, calendar, task list & add task section
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -107,30 +122,34 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          // Main Area of Content of the app
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // Calendar Widget to show current month
                   TableCalendar(
                     calendarFormat: CalendarFormat.month,
                     focusedDay: DateTime.now(),
                     firstDay: DateTime(2025),
                     lastDay: DateTime(2026),
                   ),
+                  // Display the tasks list
                   buildTaskList(tasks, removeTasks, updateTask),
                 ],
               ),
             ),
           ),
+          // Section for adding tasks
           buildAddTaskSection(nameController, addTask),
         ],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(), //Navigation Drawer
     );
   }
 }
 
-//Build the section for adding tasks
+// Build the section for adding tasks
 Widget buildAddTaskSection(nameController, addTask) {
   return Container(
     decoration: const BoxDecoration(color: Colors.white),
@@ -138,6 +157,7 @@ Widget buildAddTaskSection(nameController, addTask) {
       padding: const EdgeInsets.all(12.0),
       child: Row(
         children: [
+          // Input field for adding task names
           Expanded(
             child: Container(
               child: TextField(
@@ -150,6 +170,7 @@ Widget buildAddTaskSection(nameController, addTask) {
               ),
             ),
           ),
+          // Button to add tasks
           ElevatedButton(
             onPressed: addTask, //Adds tasks when pressed
             child: Text('Add Task'),
@@ -160,11 +181,12 @@ Widget buildAddTaskSection(nameController, addTask) {
   );
 }
 
-//Widget that displays the task item on the UI
+// Widget that displays the task item on the UI
+// Builds the scrollable list of tasks
 Widget buildTaskList(tasks, removeTasks, updateTask) {
   return ListView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
+    shrinkWrap: true, // Makes the list scrollable
+    physics: const NeverScrollableScrollPhysics(), // Disables scrolling
     itemCount: tasks.length,
     itemBuilder: (context, index) {
       final task = tasks[index];
@@ -176,7 +198,10 @@ Widget buildTaskList(tasks, removeTasks, updateTask) {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           tileColor: isEven ? Colors.blue : Colors.green,
           leading: Icon(
-            task['completed'] ? Icons.check_circle : Icons.circle_outlined,
+            task['completed']
+                ? Icons.check_circle
+                : Icons.circle_outlined, // Icon based on completion status
+            color: task['completed'] ? Colors.green : Colors.white,
           ),
           title: Text(
             task['name'],
@@ -188,13 +213,20 @@ Widget buildTaskList(tasks, removeTasks, updateTask) {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Click on checkbox to mark tasks as completed in Firestore
               Checkbox(
                 value: task['completed'],
-                onChanged: (value) => updateTask(index, value!),
+                onChanged:
+                    (value) => updateTask(
+                      index,
+                      value!,
+                    ), // Updates the task status when clicked the checkbox
               ),
+              // Button to delete tasks
               IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () => removeTasks(index),
+                onPressed:
+                    () => removeTasks(index), // Removes the task when pressed
               ),
             ],
           ),
